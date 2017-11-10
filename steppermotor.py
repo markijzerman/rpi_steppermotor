@@ -3,8 +3,6 @@
 import RPi.GPIO as GPIO
 # Importeer de time biblotheek voor tijdfuncties.
 from time import sleep
-# scheduler
-from apscheduler.schedulers.background import BackgroundScheduler
  
 # Zet de pinmode op Broadcom SOC.
 GPIO.setmode(GPIO.BCM)
@@ -21,9 +19,9 @@ for pin in StepPins:
  
 # Definieer variabelen.
 StepCounter = 0
-sched = BackgroundScheduler()
 counter = 0
 whichway = 0
+howLong = 2000
  
 # Voorwaarts
 StepCountForward = 8
@@ -56,19 +54,19 @@ StepCount = StepCountBackward
  
 try:
   while True:
-    # counter += 1
-    # print counter
+    counter += 1
+    print counter
 
-    # # elke X counts, doe iets
-    # if counter % 20000 == 0:
-    #   if whichway == 0:
-    #     Seq = SeqF
-    #     StepCount = StepCountForward
-    #     whichway = 1
-    #   else:
-    #     Seq = SeqB
-    #     StepCount = StepCountBackward
-    #     whichway = 0
+    # elke X counts, doe iets
+    if counter % howLong == 0:
+      if whichway == 0:
+        Seq = SeqF
+        StepCount = StepCountForward
+        whichway = 1
+      else:
+        Seq = SeqB
+        StepCount = StepCountBackward
+        whichway = 0
 
     for pin in range(0, 4):
       xpin = StepPins[pin]
@@ -85,9 +83,9 @@ try:
     if (StepCounter<0): StepCounter = StepCount
  
     # Wacht voor de volgende stap (lager = snellere draaisnelheid)
-    sleep(.0001)
+    sleep(.001)
  
 except KeyboardInterrupt:  
   # GPIO netjes afsluiten
+  print "ended on %i" %(counter)
   GPIO.cleanup()
-  sched.shutdown()
